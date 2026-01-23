@@ -1,0 +1,29 @@
+.tous-utilisateur {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.425);
+    margin: 2rem;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 10px 10px 10px;
+}
+
+.utilisateur-info {
+    display: flex;
+}
+
+.btn-ami {
+    background-color: rgba(165, 42, 42, 0.767);
+    padding: 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.btn-ami:hover {
+    cursor: pointer;
+    background-color: aqua;
+    color: black;
+}

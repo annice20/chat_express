@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="accueil.css">
+    <link rel="stylesheet" href="font/css/all.min.css">
+</head>
+<body data-user-id="<%= user ? user.id : '' %>">
+    <div class="container">
+        <div class="navbar">
+            <h1>Bienvenu <%= user.pseudo %></h1>
+            <a href="" class="btnLogout">
+                <% if(user.photo == null) { %>
+                    <div class="avatar">
+                        <i class="fa fa-user"></i>
+                    </div>
+                <% } else { %>
+                    <img src="/<%= user.photo %>" class="avatar" alt="OK">
+                <% } %> <span style="margin-left: 1rem;">Deconnexion</span>
+            </a>
+        </div>
+        <div id="modalpublier" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Exprimez-vous</h2>
+                </div>
+                <div class="modal-body">
+                    <form action="/publier" method="post" enctype="multipart/form-data">
+                        <textarea name="message" placeholder="Text message"></textarea>
+                        <input type="file" name="image_pub" accept="image/*">
+                        <button class="btn_publier">Publier</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="contenu">
+            <div class="contenu-entete">
+                <a href="#" id="btnpublier"><i class="fa fa-message"></i></a>
+                <a href="/utilisateurs"><i class="fa fa-users"></i></a>
+                <a href="/message"><i class="fab fa-facebook-messenger"></i></a>
+                <div class="notif-container">
+                    <i class="fa fa-bell"></i>
+                    <span id="notif-count">0</span>
+                </div>
+            </div>
+            <div class="contenu-body">
+                <% if(publications.length === 0) { %>
+                    <p>Aucune publication</p>
+                <% } else { %>
+                    <% publications.forEach(p => { %>
+                    <div class="publication">
+                        <div class="contenu-header">
+                            <% if(p.photo_user == null) { %>
+                                <div class="avatar">
+                                    <i class="fa fa-user"></i>
+                                </div>
+                            <% } else { %>
+                                <img src="/<%= p.photo_user %>" class="avatar" alt="OK">
+                            <% } %>
+                            <h2 style="margin-left: 1rem;"><%= p.user %></h2>
+                        </div>
+                        <% if(p.image_pub == null) { %>
+                            <div class="article"><%= p.contenu_pub %></div>
+                        <% } else { %>
+                            <div class="article"><%= p.contenu_pub %></div>
+                            <div class="article"><img src="/<%= p.image_pub %>" alt="OK"></div>
+                        <% } %>
+                        <div class="footer-pub">
+                            <i class="fa fa-thumbs-o-up"></i>
+                            <i class="fa fa-message"></i>
+                        </div>
+                    </div>
+                    <% }) %>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const USER_ID = document.body.dataset.userId;
+
+        if(USER_ID) {
+            socket.emit('join', USER_ID);
+        }
+
+        function loadNotifCount() {
+            fetch('/notifications/count')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('notif-count').innerText = data.count;
+            });
+        }
+
+        // au chargement
+        loadNotifCount();
+
+        // temps réel
+        socket.on('new-notification', () => {
+            loadNotifCount();
+        });
+
+        function addFriend(userId) {
+            fetch(`/notification/${userId}`, {
+                method: 'POST'
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('Invitation envoyée');
+            })
+            .catch(err => console.error(err));
+        };
+
+        const modal = document.getElementById("modalpublier");
+        const btn = document.getElementById("btnpublier");
+
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            modal.classList.add("show");
+        });
+
+        // clic en dehors → fermer
+        modal.addEventListener("click", function (e) {
+            if (e.target === modal) {
+                modal.classList.remove("show");
+            }
+        });
+    </script>
+</body>
+</html>
+

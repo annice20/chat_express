@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="accueil.css">
+    <link rel="stylesheet" href="users.css">
+    <link rel="stylesheet" href="font/css/all.min.css">
+</head>
+<body data-user-id="<%= user ? user.id : '' %>">
+    <div class="container">
+        <div class="navbar">
+            <h1>Bienvenu <%= user.pseudo %></h1>
+            <a href="" class="btnLogout">
+                <% if(user.photo == null) { %>
+                    <div class="avatar">
+                        <i class="fa fa-user"></i>
+                    </div>
+                <% } else { %>
+                    <img src="/<%= user.photo %>" class="avatar" alt="OK">
+                <% } %> <span style="margin-left: 1rem;">Deconnexion</span>
+            </a>
+        </div>
+        <div class="contenu">
+            <div class="contenu-entete">
+                <a href="/accueil"><i class="fa fa-message"></i></a>
+                <a href="/utilisateurs"><i class="fa fa-users"></i></a>
+                <div class="dropdown">
+                    <span><i class="fa fa-bell"></i></span>
+                    <div class="dropdown-content">
+                        <p>vous avez une invitation</p>
+                        <p>vous avez une invitation</p>
+                    </div>
+                </div> 
+                <a href="/message"><i class="fab fa-facebook-messenger"></i></a>
+            </div>
+            <div class="contenu-body">
+                <% if(users.length === 0) { %>
+                    <p>Aucun utilisateurs</p>
+                <% } else { %>
+                    <% users.forEach(u => { %>
+                    <div class="tous-utilisateur">
+                        <div class="utilisateur-info">
+                            <% if(u.photo == null) { %>
+                                <div class="avatar">
+                                    <i class="fa fa-user"></i>
+                                </div>
+                            <% } else { %>
+                                <img src="/<%= u.photo %>" class="avatar" alt="OK">
+                            <% } %>
+                            <h2 style="margin-left: 1rem;"><%= u.pseudo %></h2>
+                        </div>
+                        <div class="utilisateur-action">
+                            <button type="button" 
+                                data-user-id="<%= u.user_id %>" 
+                                onclick="addFriend(this.dataset.userId)" 
+                                class="btn-ami">Ajouter comme ami
+                            </button>
+                        </div>
+                    </div>
+                    <% }) %>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const USER_ID = document.body.dataset.userId;
+
+        if(USER_ID) {
+            socket.emit('join', USER_ID);
+        }
+
+        function loadNotifCount() {
+            fetch('/notifications/count')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('notif-count').innerText = data.count;
+            });
+        }
+
+        // au chargement
+        loadNotifCount();
+
+        // temps réel
+        socket.on('new-notification', () => {
+            loadNotifCount();
+        });
+
+        function addFriend(userId) {
+            fetch(`/notification/${userId}`, {
+                method: 'POST'
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('Invitation envoyée');
+            })
+            .catch(err => console.error(err));
+        };
+
+        const modal = document.getElementById("modalpublier");
+        const btn = document.getElementById("btnpublier");
+
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            modal.classList.add("show");
+        });
+
+        // clic en dehors → fermer
+        modal.addEventListener("click", function (e) {
+            if (e.target === modal) {
+                modal.classList.remove("show");
+            }
+        });
+    </script>
+</body>
+</html>
