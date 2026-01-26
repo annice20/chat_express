@@ -25,15 +25,32 @@
         </div>
         <div class="contenu">
             <div class="contenu-entete">
-                <a href="/accueil"><i class="fa fa-message"></i></a>
+                <a href="/accueil"><i class="fa fa-home"></i></a>
                 <a href="/utilisateurs"><i class="fa fa-users"></i></a>
                 <div class="dropdown">
-                    <span><i class="fa fa-bell"></i></span>
-                    <div class="dropdown-content">
-                        <p>vous avez une invitation</p>
-                        <p>vous avez une invitation</p>
+                    <div class="notif-container">
+                        <i class="fa fa-bell"></i>
+                        <span id="notif-count">0</span>
                     </div>
-                </div> 
+                    <div class="dropdown-content">
+                        <div class="notif-detail">
+                            <% if(notifications.length === 0) { %>
+                                <p>Aucune notification</p>
+                            <% } else { %>
+                                <% notifications.forEach(notific => { %>
+                                    <% if(notific.photo == null) { %>
+                                        <div class="avatar">
+                                            <i class="fa fa-user"></i>
+                                        </div>
+                                    <% } else { %>
+                                        <img src="/<%= notific.photo %>" class="avatar" alt="OK">
+                                    <% } %>
+                                    <p><%= notific.contenu_notif %></p>
+                                <% }) %>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
                 <a href="/message"><i class="fab fa-facebook-messenger"></i></a>
             </div>
             <div class="contenu-body">

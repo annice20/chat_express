@@ -44,11 +44,15 @@
 
 #notif-count {
     position: absolute;
-    top: -15px;
-    right: -4px;
-    color: #e41e3f;
+    top: -10px;
+    right: -15px;
+    width: 35px;
+    background-color: #e41e3f;
+    color: white;
+    border-radius: 110px;
     font-weight: bold;
-    font-size: 35px;
+    font-size: 25px;
+    text-align: center;
 }
 
 .fa, .fab {
@@ -69,20 +73,42 @@
 .dropdown {
     position: relative;
     display: inline-block;
+    padding-right: 80px;
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
     background-color: #f9f9f9;
-    min-width: 400px;
+    min-width: 370px;
+    max-height: 400px;
+    overflow-y: auto;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     padding: 12px 16px;
     z-index: 1;
+    font-size: 20px;
 }
 
 .dropdown:hover .dropdown-content {
     display: block;
+}
+
+.notif-affichage {
+    display: flex;
+    border-bottom: 1px solid gray;
+}
+
+.notif-affichage:last-child {
+    border-bottom: none;
+}
+
+.notif-detail p {
+    margin-left: 1rem;
+}
+
+.notif-date {
+    padding-top: 100px;
+    padding-bottom: 1rem;
 }
 
 .modal {
@@ -92,6 +118,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: center;
+    z-index: 9999;
 
     opacity: 0;
     pointer-events: none;
@@ -141,6 +168,23 @@ textarea {
     margin-bottom: 2rem;
     padding-left: 1rem;
     padding-top: 1rem;
+}
+
+.btn_publication {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    margin-top: 1rem;
+    width: 30%;
+    height: 60px;
+    text-decoration: none;
+    border-radius: 10px;
+    border: none;
+    background-color: blue;
+    color: white;
+    font-size: 30px;
+    margin-bottom: 2rem;
 }
 
 .btn_publier {
@@ -199,6 +243,13 @@ textarea {
 .article {
     padding: 20px;
 }
+
+.article-img img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
 
 .footer-pub {
     border-top: 1px solid rgb(196, 192, 192);

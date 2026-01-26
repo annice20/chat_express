@@ -12,8 +12,7 @@ router.post('/notification/:id', async (req, res) => {
         );
 
         // notifier en temps réel
-        const io = req.app.get('io');
-        io.to(`user_${receiverId}`).emit('new-notification');
+        req.io.to(receiverId.toString()).emit('new-notification');
         res.json({ success: true });
     } catch(err) {
         console.log(err);

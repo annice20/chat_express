@@ -11,9 +11,12 @@ router.get('/accueil', async (req, res) => {
 
         const [publications] = await pool.query("SELECT * FROM Publication");
 
+        const [notifications] = await pool.query("SELECT * FROM V_notification WHERE receiver_id = ? ORDER BY date_envoi DESC", [req.session.user.id]);
+
         res.render('accueil', {
             user: req.session.user,
-            publications: publications
+            publications: publications,
+            notifications: notifications
         });
     } catch(err){
         console.log(err);

@@ -38,15 +38,41 @@
         </div>
         <div class="contenu">
             <div class="contenu-entete">
-                <a href="#" id="btnpublier"><i class="fa fa-message"></i></a>
+                <a href="/accueil"><i class="fa fa-home"></i></a>
                 <a href="/utilisateurs"><i class="fa fa-users"></i></a>
-                <a href="/message"><i class="fab fa-facebook-messenger"></i></a>
-                <div class="notif-container">
-                    <i class="fa fa-bell"></i>
-                    <span id="notif-count">0</span>
+                <div class="dropdown">
+                    <div class="notif-container">
+                        <i class="fa fa-bell"></i>
+                        <span id="notif-count">0</span>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="notif-detail">
+                            <% if(notifications.length === 0) { %>
+                                <p>Aucune notification</p>
+                            <% } else { %>
+                                <% notifications.forEach(notific => { %>
+                                    <div class="notif-affichage">
+                                        <% if(notific.photo == null) { %>
+                                            <div class="avatar">
+                                                <i class="fa fa-user"></i>
+                                            </div>
+                                        <% } else { %>
+                                            <img src="/<%= notific.photo %>" class="avatar" alt="OK">
+                                        <% } %>
+                                        <p><%= notific.contenu_notif %></p>
+                                        <small class="notif-date" data-date="<%= notific.date_envoi %>">
+                                            <%= dayjs(notific.date_envoi).fromNow() %>
+                                        </small>
+                                    </div>
+                                <% }) %>
+                            <% } %>
+                        </div>
+                    </div>
                 </div>
+                <a href="/message"><i class="fab fa-facebook-messenger"></i></a>
             </div>
             <div class="contenu-body">
+                <a href="#" class="btn_publication" id="btnpublier">Publication</a>
                 <% if(publications.length === 0) { %>
                     <p>Aucune publication</p>
                 <% } else { %>
@@ -66,7 +92,9 @@
                             <div class="article"><%= p.contenu_pub %></div>
                         <% } else { %>
                             <div class="article"><%= p.contenu_pub %></div>
-                            <div class="article"><img src="/<%= p.image_pub %>" alt="OK"></div>
+                            <div class="article">
+                                <div class="article-img"><img src="/<%= p.image_pub %>" alt="OK"></div>
+                            </div>
                         <% } %>
                         <div class="footer-pub">
                             <i class="fa fa-thumbs-o-up"></i>
@@ -79,6 +107,9 @@
         </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/locale/fr.js"></script>
     <script>
         const socket = io();
         const USER_ID = document.body.dataset.userId;
@@ -113,6 +144,18 @@
             })
             .catch(err => console.error(err));
         };
+
+        // Configuration côté client
+        dayjs.extend(dayjs_plugin_relativeTime);
+        dayjs.locale('fr');
+
+        // On met à jour toutes les minutes
+        setInterval(() => {
+            document.querySelectorAll('.notif-date').forEach(el => {
+                const originalDate = el.getAttribute('data-date');
+                el.innerText = dayjs(originalDate).fromNow();
+            });
+        }, 60000); // 60000 ms = 1 minute
 
         const modal = document.getElementById("modalpublier");
         const btn = document.getElementById("btnpublier");

@@ -12,6 +12,7 @@ CREATE TABLE Users(
 
 INSERT INTO Users VALUES(1, "Bob", "RAKOTONIRINA", "bob12", "bob@gmail.com", "salut", "349646745", NULL);
 INSERT INTO Users VALUES(2, 'Anja', 'MIRANA', 'anja', 'anja@gmail.com', 'anja', '380649004', NULL);
+INSERT INTO Users VALUES(3, 'Marinah', 'ONITIANA', 'Hello World', 'marinah@gmail.com', 'world', '381609974', NULL);
 
 CREATE TABLE Publication(
     id_publication int(11) NOT NULL AUTO_INCREMENT,
@@ -35,6 +36,20 @@ CREATE TABLE Notification(
     FOREIGN KEY(sender_id) REFERENCES Users(user_id),
     FOREIGN KEY(receiver_id) REFERENCES Users(user_id)
 );
+
+CREATE OR REPLACE VIEW V_notification AS
+SELECT
+    n.id_notif,
+    n.sender_id,
+    n.receiver_id,
+    u.photo,
+    u.pseudo,
+    n.contenu_notif,
+    n.statut,
+    n.est_lu,
+    n.date_envoi
+FROM Notification n
+JOIN Users u ON u.user_id = n.sender_id;
 
 CREATE TABLE Messages(
     message_id int(11) NOT NULL AUTO_INCREMENT,
