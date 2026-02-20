@@ -6,39 +6,44 @@
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="accueil.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="font/css/all.min.css">
 </head>
 <body data-user-id="<%= user ? user.id : '' %>">
-    <div class="container">
-        <div class="navbar">
-            <h1>Bienvenu <%= user.pseudo %></h1>
-            <a href="" class="btnLogout">
-                <% if(user.photo == null) { %>
-                    <div class="avatar">
-                        <i class="fa fa-user"></i>
-                    </div>
-                <% } else { %>
-                    <img src="/<%= user.photo %>" class="avatar" alt="OK">
-                <% } %> <span style="margin-left: 1rem;">Deconnexion</span>
-            </a>
-        </div>
-        <div id="modalpublier" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Exprimez-vous</h2>
+    <nav class="navbar">
+        <h1>Bienvenu <%= user.pseudo %></h1>
+        <a href="" class="btnLogout">
+            <% if(user.photo == null) { %>
+                <div class="avatar">
+                    <i class="fa fa-user"></i>
                 </div>
-                <div class="modal-body">
-                    <form action="/publier" method="post" enctype="multipart/form-data">
-                        <textarea name="message" placeholder="Text message"></textarea>
-                        <input type="file" name="image_pub" accept="image/*">
-                        <button class="btn_publier">Publier</button>
-                    </form>
+            <% } else { %>
+                <img src="/<%= user.photo %>" class="avatar" alt="OK">
+            <% } %> <span style="margin-left: 1rem;">Deconnexion</span>
+        </a>
+    </nav>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/publier" method="post" enctype="multipart/form-data">
+                            <textarea class="form-control" name="message" placeholder="Text message"></textarea>
+                            <input type="file" class="form-control mt-3" name="image_pub" accept="image/*">
+                            <button class="btn btn-primary btn_publier mt-3">Publier</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="contenu">
-            <div class="contenu-entete">
-                <a href="/accueil"><i class="fa fa-home"></i></a>
+    <div class="contenu">
+        <div class="contenu-entete">
+            <a href="/accueil"><i class="fa fa-home"></i></a>
                 <a href="/utilisateurs"><i class="fa fa-users"></i></a>
                 <div class="dropdown">
                     <div class="notif-container">
@@ -51,18 +56,24 @@
                                 <p>Aucune notification</p>
                             <% } else { %>
                                 <% notifications.forEach(notific => { %>
-                                    <div class="notif-affichage">
-                                        <% if(notific.photo == null) { %>
-                                            <div class="avatar">
-                                                <i class="fa fa-user"></i>
-                                            </div>
-                                        <% } else { %>
-                                            <img src="/<%= notific.photo %>" class="avatar" alt="OK">
-                                        <% } %>
-                                        <p><%= notific.contenu_notif %></p>
+                                    <div class="tous-detail">
+                                        <div class="notif-affichage">
+                                            <% if(notific.photo == null) { %>
+                                                <div class="avatar" style="width: 120px;">
+                                                    <i class="fa fa-user"></i>
+                                                </div>
+                                            <% } else { %>
+                                                <img src="/<%= notific.photo %>" class="avatar" width="200px" height="200px" alt="OK">
+                                            <% } %>
+                                            <%= notific.contenu_notif %>
+                                        </div>
                                         <small class="notif-date" data-date="<%= notific.date_envoi %>">
-                                            <%= dayjs(notific.date_envoi).fromNow() %>
+                                                <%= dayjs(notific.date_envoi).fromNow() %>
                                         </small>
+                                        <div class="lesbtn">
+                                            <button type="button" class="btn btn-primary">Accepter</button>
+                                            <button type="button" class="btn btn-danger">Refuser</button>
+                                        </div>
                                     </div>
                                 <% }) %>
                             <% } %>
@@ -72,12 +83,16 @@
                 <a href="/message"><i class="fab fa-facebook-messenger"></i></a>
             </div>
             <div class="contenu-body">
-                <a href="#" class="btn_publication" id="btnpublier">Publication</a>
+                <div class="contenu-body d-flex justify-content-center">
+                    <button type="button" class="btn btn-primary btn_publication mt-3 mb-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Publication
+                    </button>
+                </div>
                 <% if(publications.length === 0) { %>
                     <p>Aucune publication</p>
                 <% } else { %>
                     <% publications.forEach(p => { %>
-                    <div class="publication">
+                    <div class="card publication">
                         <div class="contenu-header">
                             <% if(p.photo_user == null) { %>
                                 <div class="avatar">
@@ -86,14 +101,18 @@
                             <% } else { %>
                                 <img src="/<%= p.photo_user %>" class="avatar" alt="OK">
                             <% } %>
-                            <h2 style="margin-left: 1rem;"><%= p.user %></h2>
+                            <h2><%= p.user %></h2>
                         </div>
                         <% if(p.image_pub == null) { %>
                             <div class="article"><%= p.contenu_pub %></div>
                         <% } else { %>
                             <div class="article"><%= p.contenu_pub %></div>
-                            <div class="article">
-                                <div class="article-img"><img src="/<%= p.image_pub %>" alt="OK"></div>
+                            <div class="article bg-secondary">
+                                <div class="col-md-4"> 
+                                    <div class="ratio ratio-21x9 article-img bg-light border">
+                                        <img src="/<%= p.image_pub %>" class="img-centered" alt="Cover">
+                                    </div>
+                                </div>
                             </div>
                         <% } %>
                         <div class="footer-pub">
@@ -106,6 +125,8 @@
             </div>
         </div>
     </div>
+        
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
