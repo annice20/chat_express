@@ -50,12 +50,14 @@ const loginRouter = require('./routes/login');
 const accueilRouter = require('./routes/accueil');
 const userRouter = require('./routes/utilisateurs');
 const notificationRouter = require('./routes/notifications');
+const amisRouter = require('./routes/amis');
 const messageRouter = require('./routes/message');
 
 app.use(loginRouter);
 app.use(accueilRouter);
 app.use(userRouter);
 app.use(notificationRouter);
+app.use(amisRouter);
 app.use(messageRouter);
 
 // LOGIQUE SOCKET.IO CENTRALISÉE

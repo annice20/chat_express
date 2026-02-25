@@ -23,24 +23,24 @@
         </a>
     </nav>
 
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="/publier" method="post" enctype="multipart/form-data">
-                            <textarea class="form-control" name="message" placeholder="Text message"></textarea>
-                            <input type="file" class="form-control mt-3" name="image_pub" accept="image/*">
-                            <button class="btn btn-primary btn_publier mt-3">Publier</button>
-                        </form>
-                    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/publier" method="post" enctype="multipart/form-data">
+                        <textarea class="form-control" name="message" placeholder="Text message"></textarea>
+                        <input type="file" class="form-control mt-3" name="image_pub" accept="image/*">
+                        <button class="btn btn-primary btn_publier mt-3">Publier</button>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
     <div class="contenu">
         <div class="contenu-entete">
             <a href="/accueil"><i class="fa fa-home"></i></a>
@@ -71,8 +71,12 @@
                                                 <%= dayjs(notific.date_envoi).fromNow() %>
                                         </small>
                                         <div class="lesbtn">
-                                            <button type="button" class="btn btn-primary">Accepter</button>
-                                            <button type="button" class="btn btn-danger">Refuser</button>
+                                            <% if(notific.statut == 1) { %>
+                                                <p>Vous êtes amis</p>
+                                            <% } else { %>
+                                                <button type="button" class="btn btn-primary" onclick="insertFriend('<%= notific.id_notif %>')">Accepter</button>
+                                                <button type="button" class="btn btn-danger">Refuser</button>
+                                            <% } %>
                                         </div>
                                     </div>
                                 <% }) %>
@@ -155,7 +159,18 @@
             loadNotifCount();
         });
 
-        function addFriend(userId) {
+        function insertFriend(notifId) {
+            fetch(`/amis/${notifId}`, {
+                method: 'POST'
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('Réponse envoyée');
+            })
+            .catch(err => console.error(err));
+        };
+
+        /*function addFriend(userId) {
             fetch(`/notification/${userId}`, {
                 method: 'POST'
             })
@@ -164,7 +179,7 @@
                 console.log('Invitation envoyée');
             })
             .catch(err => console.error(err));
-        };
+        };*/
 
         // Configuration côté client
         dayjs.extend(dayjs_plugin_relativeTime);
@@ -178,7 +193,7 @@
             });
         }, 60000); // 60000 ms = 1 minute
 
-        const modal = document.getElementById("modalpublier");
+        /*const modal = document.getElementById("modalpublier");
         const btn = document.getElementById("btnpublier");
 
         btn.addEventListener("click", function (e) {
@@ -191,7 +206,7 @@
             if (e.target === modal) {
                 modal.classList.remove("show");
             }
-        });
+        });*/
     </script>
 </body>
 </html>

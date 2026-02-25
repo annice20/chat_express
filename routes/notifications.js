@@ -16,7 +16,7 @@ router.post('/notification/:id', async (req, res) => {
         res.json({ success: true });
     } catch(err) {
         console.log(err);
-        res.status(500).json({ massage: 'Internal Server Error' });
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 });
 

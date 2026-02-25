@@ -100,6 +100,8 @@ body {
 .tous-detail {
     padding: .5rem;
     border-bottom: 1px solid gray;
+    overflow-y: auto;
+    max-height: 300px;
 }
 
 .notif-affichage {

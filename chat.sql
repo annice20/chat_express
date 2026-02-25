@@ -51,6 +51,23 @@ SELECT
 FROM Notification n
 JOIN Users u ON u.user_id = n.sender_id;
 
+CREATE TABLE Amis(
+    amis_id int(11) NOT NULL AUTO_INCREMENT,
+    user_id int(11) NOT NULL,
+    id_notif int(11) NOT NULL,
+    PRIMARY KEY(amis_id),
+    FOREIGN KEY(user_id) REFERENCES Users(user_id),
+    FOREIGN KEY(id_notif) REFERENCES Notification(id_notif)
+);
+
+CREATE OR REPLACE VIEW V_amis AS
+SELECT
+    a.amis_id,
+    vn.photo,
+    vn.pseudo
+FROM Amis a
+JOIN V_notification vn ON a.id_notif = vn.id_notif;
+
 CREATE TABLE Messages(
     message_id int(11) NOT NULL AUTO_INCREMENT,
     sender text NOT NULL,
