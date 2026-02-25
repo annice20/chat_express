@@ -71,7 +71,7 @@
                                                 <%= dayjs(notific.date_envoi).fromNow() %>
                                         </small>
                                         <div class="lesbtn">
-                                            <% if(notific.statut == 1) { %>
+                                            <% if (friends.includes(notific.sender_id)) { %>
                                                 <p>Vous êtes amis</p>
                                             <% } else { %>
                                                 <button type="button" class="btn btn-primary" onclick="insertFriend('<%= notific.id_notif %>')">Accepter</button>

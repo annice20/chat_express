@@ -4,23 +4,43 @@ const pool = require('../db');
 
 router.post('/amis/:id', async (req, res) => {
     try {
-        const userId = req.session.user.id;
+        const userId = req.session.user.id; // celui qui accepte
         const notifId = req.params.id;
 
-        await pool.query("INSERT INTO Amis(user_id, id_notif) VALUES(?, ?)",
-            [userId, notifId]
+        // Vérifier notification
+        const [rows] = await pool.query(
+            "SELECT * FROM Notification WHERE id_notif = ? AND receiver_id = ? AND statut = 0",
+            [notifId, userId]
         );
 
-        await pool.query("INSERT INTO Notification(sender_id, receiver_id, contenu_notif, statut, date_envoi) VALUES(?, ?, ?, ?, ?)",
-            [notifId ,userId, 'Votre invitation a été accepté', 1, new Date()]
+        if (rows.length === 0) {
+            return res.status(400).json({ message: "Invitation invalide" });
+        }
+
+        const notification = rows[0];
+        const friendId = notification.sender_id;
+
+        // Mettre à jour statut
+        await pool.query(
+            "UPDATE Notification SET statut = 1, est_lu = 1 WHERE id_notif = ?",
+            [notifId]
         );
-        
-        req.io.to(userId.toString()).emit('new-notification');
+
+        // Ajouter relation bidirectionnelle
+        await pool.query(
+            "INSERT INTO Amis(user_id, friend_id) VALUES (?, ?), (?, ?)",
+            [
+                userId, friendId,
+                friendId, userId
+            ]
+        );
+
         res.json({ success: true });
+
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        console.error(error);
+        res.status(500).json({ error: error.message });
     }
-})
+});
 
 module.exports = router;

@@ -52,21 +52,24 @@ FROM Notification n
 JOIN Users u ON u.user_id = n.sender_id;
 
 CREATE TABLE Amis(
-    amis_id int(11) NOT NULL AUTO_INCREMENT,
-    user_id int(11) NOT NULL,
-    id_notif int(11) NOT NULL,
-    PRIMARY KEY(amis_id),
-    FOREIGN KEY(user_id) REFERENCES Users(user_id),
-    FOREIGN KEY(id_notif) REFERENCES Notification(id_notif)
+    amis_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    friend_id INT NOT NULL,
+    date_ajout DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (friend_id) REFERENCES Users(user_id),
+    UNIQUE (user_id, friend_id)
 );
 
 CREATE OR REPLACE VIEW V_amis AS
 SELECT
     a.amis_id,
-    vn.photo,
-    vn.pseudo
+    a.user_id,
+    a.friend_id,
+    u.photo,
+    u.pseudo
 FROM Amis a
-JOIN V_notification vn ON a.id_notif = vn.id_notif;
+JOIN Users u ON u.user_id = a.friend_id;
 
 CREATE TABLE Messages(
     message_id int(11) NOT NULL AUTO_INCREMENT,
